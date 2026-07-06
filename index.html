@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRGlow - Premium QR Code Suite</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="bg-glow">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <i class="fa-solid fa-qrcode icon-glow"></i>
+                <h1>QR<span>Glow</span></h1>
+            </div>
+            <p class="tagline">Generate & Scan permanent QR Codes instantly</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tab-navigation">
+            <button class="tab-btn active" data-tab="generate">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Generate QR
+            </button>
+            <button class="tab-btn" data-tab="scan">
+                <i class="fa-solid fa-camera"></i> Scan QR
+            </button>
+            <button class="tab-btn" data-tab="history">
+                <i class="fa-solid fa-clock-rotate-left"></i> History
+            </button>
+        </nav>
+
+        <main class="main-content">
+            <!-- GENERATE TAB -->
+            <section id="generate-section" class="tab-section active">
+                <div class="grid-layout">
+                    <!-- Generator Configuration -->
+                    <div class="config-card glass-panel">
+                        <h2><i class="fa-solid fa-sliders"></i> 1. Configure QR</h2>
+                        
+                        <!-- Content Type Selector -->
+                        <div class="type-selector">
+                            <button class="type-btn active" data-type="url" title="Website URL"><i class="fa-solid fa-link"></i> URL</button>
+                            <button class="type-btn" data-type="text" title="Plain Text"><i class="fa-solid fa-align-left"></i> Text</button>
+                            <button class="type-btn" data-type="wifi" title="Wi-Fi Network"><i class="fa-solid fa-wifi"></i> Wi-Fi</button>
+                            <button class="type-btn" data-type="email" title="Email Message"><i class="fa-solid fa-envelope"></i> Email</button>
+                            <button class="type-btn" data-type="phone" title="Phone Call"><i class="fa-solid fa-phone"></i> Phone</button>
+                            <button class="type-btn" data-type="sms" title="SMS Message"><i class="fa-solid fa-comment-sms"></i> SMS</button>
+                        </div>
+
+                        <!-- Dynamic Inputs -->
+                        <div class="input-container">
+                            <!-- URL Input -->
+                            <div class="input-group active" id="input-url">
+                                <label for="url-val"><i class="fa-solid fa-link"></i> Target URL</label>
+                                <input type="url" id="url-val" placeholder="https://example.com" value="https://google.com">
+                            </div>
+
+                            <!-- Plain Text Input -->
+                            <div class="input-group" id="input-text">
+                                <label for="text-val"><i class="fa-solid fa-align-left"></i> Message / Text</label>
+                                <textarea id="text-val" rows="3" placeholder="Enter your text or message here..."></textarea>
+                            </div>
+
+                            <!-- Wi-Fi Input -->
+                            <div class="input-group" id="input-wifi">
+                                <label><i class="fa-solid fa-wifi"></i> Wi-Fi Credentials</label>
+                                <div class="wifi-grid">
+                                    <div class="sub-input">
+                                        <label for="wifi-ssid">Network Name (SSID)</label>
+                                        <input type="text" id="wifi-ssid" placeholder="MyHomeWiFi">
+                                    </div>
+                                    <div class="sub-input">
+                                        <label for="wifi-pass">Password</label>
+                                        <input type="password" id="wifi-pass" placeholder="••••••••">
+                                    </div>
+                                    <div class="sub-input full-width">
+                                        <label for="wifi-enc">Security Type</label>
+                                        <select id="wifi-enc">
+                                            <option value="WPA" selected>WPA / WPA2</option>
+                                            <option value="WEP">WEP</option>
+                                            <option value="nopass">No Password (Open)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email Input -->
+                            <div class="input-group" id="input-email">
+                                <label><i class="fa-solid fa-envelope"></i> Compose Email</label>
+                                <div class="email-grid">
+                                    <div class="sub-input full-width">
+                                        <label for="email-to">To (Email Address)</label>
+                                        <input type="email" id="email-to" placeholder="hello@example.com">
+                                    </div>
+                                    <div class="sub-input full-width">
+                                        <label for="email-subject">Subject</label>
+                                        <input type="text" id="email-subject" placeholder="Inquiry from QR Code">
+                                    </div>
+                                    <div class="sub-input full-width">
+                                        <label for="email-body">Message Body</label>
+                                        <textarea id="email-body" rows="3" placeholder="Write your message details here..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Phone Input -->
+                            <div class="input-group" id="input-phone">
+                                <label for="phone-val"><i class="fa-solid fa-phone"></i> Phone Number</label>
+                                <input type="tel" id="phone-val" placeholder="+1234567890">
+                            </div>
+
+                            <!-- SMS Input -->
+                            <div class="input-group" id="input-sms">
+                                <label><i class="fa-solid fa-comment-sms"></i> Send SMS</label>
+                                <div class="sms-grid">
+                                    <div class="sub-input full-width">
+                                        <label for="sms-phone">Phone Number</label>
+                                        <input type="tel" id="sms-phone" placeholder="+1234567890">
+                                    </div>
+                                    <div class="sub-input full-width">
+                                        <label for="sms-msg">SMS Text</label>
+                                        <textarea id="sms-msg" rows="3" placeholder="Write your SMS message..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Styling Settings -->
+                        <div class="styling-section">
+                            <h3><i class="fa-solid fa-palette"></i> Customize Design</h3>
+                            <div class="styling-grid">
+                                <div class="style-option">
+                                    <label for="qr-fg-color">QR Color</label>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="qr-fg-color" value="#0f172a">
+                                        <span id="fg-val">#0f172a</span>
+                                    </div>
+                                </div>
+                                <div class="style-option">
+                                    <label for="qr-bg-color">Background Color</label>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="qr-bg-color" value="#ffffff">
+                                        <span id="bg-val">#ffffff</span>
+                                    </div>
+                                </div>
+                                <div class="style-option">
+                                    <label for="qr-size">Size (px)</label>
+                                    <div class="range-slider">
+                                        <input type="range" id="qr-size" min="128" max="512" step="16" value="256">
+                                        <span id="size-val">256px</span>
+                                    </div>
+                                </div>
+                                <div class="style-option">
+                                    <label for="qr-margin">Margin</label>
+                                    <div class="range-slider">
+                                        <input type="range" id="qr-margin" min="0" max="10" step="1" value="2">
+                                        <span id="margin-val">2 blocks</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- QR Code Preview Card -->
+                    <div class="preview-card glass-panel">
+                        <h2><i class="fa-solid fa-eye"></i> 2. Live Preview</h2>
+                        <div class="qr-canvas-container">
+                            <div id="qrcode-wrapper">
+                                <canvas id="qrcode-canvas"></canvas>
+                            </div>
+                            <div class="preview-overlay" id="preview-overlay">
+                                <i class="fa-solid fa-circle-notch fa-spin"></i>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="btn-download-png" class="btn btn-primary">
+                                <i class="fa-solid fa-download"></i> Download PNG
+                            </button>
+                            <button id="btn-copy" class="btn btn-secondary">
+                                <i class="fa-solid fa-copy"></i> Copy QR Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCAN TAB -->
+            <section id="scan-section" class="tab-section">
+                <div class="grid-layout">
+                    <!-- Scanner Viewfinder -->
+                    <div class="config-card glass-panel">
+                        <h2><i class="fa-solid fa-camera"></i> Scan QR Code</h2>
+                        
+                        <div class="scanner-tabs">
+                            <button class="scan-type-btn active" data-scan-mode="camera">
+                                <i class="fa-solid fa-video"></i> Camera Feed
+                            </button>
+                            <button class="scan-type-btn" data-scan-mode="file">
+                                <i class="fa-solid fa-file-arrow-up"></i> Upload Image
+                            </button>
+                        </div>
+
+                        <!-- Camera Scanner Interface -->
+                        <div id="camera-scanner-container" class="scanner-container active">
+                            <div class="camera-controls">
+                                <select id="camera-select" class="camera-select">
+                                    <option value="">Selecting cameras...</option>
+                                </select>
+                                <button id="btn-toggle-camera" class="btn btn-primary">
+                                    <i class="fa-solid fa-play"></i> Start Camera
+                                </button>
+                            </div>
+                            <div class="viewfinder-wrapper">
+                                <div id="interactive-reader"></div>
+                                <div class="scanner-laser" id="scanner-laser" style="display:none;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Image File Upload Interface -->
+                        <div id="file-scanner-container" class="scanner-container">
+                            <div class="drop-zone" id="drop-zone">
+                                <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                                <p class="drop-text">Drag & drop your QR Code image here, or <span>browse files</span></p>
+                                <input type="file" id="qr-file-input" accept="image/*" style="display:none;">
+                                <div class="file-preview-container" id="file-preview-container" style="display:none;">
+                                    <img id="scanned-image-preview" src="" alt="Scanned Preview">
+                                    <button class="remove-file-btn" id="btn-remove-file"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scanner Results Card -->
+                    <div class="preview-card glass-panel">
+                        <h2><i class="fa-solid fa-square-poll-horizontal"></i> Scan Result</h2>
+                        <div class="result-display-wrapper">
+                            <div class="result-placeholder" id="result-placeholder">
+                                <i class="fa-solid fa-qrcode"></i>
+                                <p>Waiting for QR code detection...</p>
+                            </div>
+                            <div class="result-content" id="result-content" style="display:none;">
+                                <div class="result-header">
+                                    <span class="badge" id="result-badge">Text</span>
+                                    <span class="timestamp" id="result-time">12:00 PM</span>
+                                </div>
+                                <div class="result-text-box">
+                                    <textarea id="result-text" readonly></textarea>
+                                </div>
+                                <div class="result-actions">
+                                    <button id="btn-copy-result" class="btn btn-primary">
+                                        <i class="fa-solid fa-copy"></i> Copy Content
+                                    </button>
+                                    <a id="btn-visit-link" href="#" target="_blank" class="btn btn-secondary disabled" rel="noopener noreferrer">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Visit Link
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HISTORY TAB -->
+            <section id="history-section" class="tab-section">
+                <div class="history-container glass-panel">
+                    <div class="history-header">
+                        <h2><i class="fa-solid fa-clock-rotate-left"></i> Activity History</h2>
+                        <button id="btn-clear-history" class="btn btn-danger">
+                            <i class="fa-solid fa-trash-can"></i> Clear All History
+                        </button>
+                    </div>
+                    <div class="history-list" id="history-list">
+                        <div class="history-empty" id="history-empty">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <p>No activity yet. Start generating or scanning QR Codes!</p>
+                        </div>
+                        <!-- JavaScript will populate history items here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 QRGlow. All rights reserved. Created with <i class="fa-solid fa-heart" style="color: var(--neon-cyan);"></i></p>
+        </footer>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">
+        <i class="fa-solid fa-circle-check toast-icon"></i>
+        <span id="toast-message">Copied to clipboard!</span>
+    </div>
+
+    <!-- QR Code Library (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- HTML5 QR Code Scanner Library (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <!-- Application Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
