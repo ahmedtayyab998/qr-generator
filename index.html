@@ -57,6 +57,7 @@
                             <button class="type-btn" data-type="email" title="Email Message"><i class="fa-solid fa-envelope"></i> Email</button>
                             <button class="type-btn" data-type="phone" title="Phone Call"><i class="fa-solid fa-phone"></i> Phone</button>
                             <button class="type-btn" data-type="sms" title="SMS Message"><i class="fa-solid fa-comment-sms"></i> SMS</button>
+                            <button class="type-btn" data-type="image" title="Image File"><i class="fa-solid fa-image"></i> Image</button>
                         </div>
 
                         <!-- Dynamic Inputs -->
@@ -132,6 +133,44 @@
                                     <div class="sub-input full-width">
                                         <label for="sms-msg">SMS Text</label>
                                         <textarea id="sms-msg" rows="3" placeholder="Write your SMS message..."></textarea>
+                                    </div>
+                            </div>
+
+                            <!-- Image Input -->
+                            <div class="input-group" id="input-image">
+                                <label><i class="fa-solid fa-image"></i> Upload & Host Image</label>
+                                <div class="image-grid">
+                                    <div class="sub-input full-width">
+                                        <label for="imgbb-api-key">ImgBB API Key <span class="req-label">(Required for uploading)</span></label>
+                                        <div class="api-key-input-wrapper">
+                                            <input type="password" id="imgbb-api-key" placeholder="Enter your ImgBB API Key">
+                                            <a href="https://api.imgbb.com/" target="_blank" class="link-get-key" rel="noopener noreferrer">Get Key <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="sub-input full-width">
+                                        <label>Select Image File</label>
+                                        <div class="drop-zone-gen" id="drop-zone-gen">
+                                            <i class="fa-solid fa-image drop-icon-gen"></i>
+                                            <p class="drop-text-gen">Drag & drop your image here, or <span>browse files</span></p>
+                                            <input type="file" id="gen-image-input" accept="image/*" style="display:none;">
+                                            <div class="file-preview-container-gen" id="file-preview-container-gen" style="display:none;">
+                                                <img id="gen-image-preview" src="" alt="Upload Preview">
+                                                <button type="button" class="remove-file-btn" id="btn-remove-gen-file"><i class="fa-solid fa-xmark"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="sub-input full-width" id="image-upload-status" style="display:none;">
+                                        <div class="progress-bar-wrapper">
+                                            <div class="progress-bar-fill" id="image-progress-bar"></div>
+                                        </div>
+                                        <span class="upload-status-text" id="image-status-text">Uploading image...</span>
+                                    </div>
+                                    <div class="sub-input full-width" id="image-url-result" style="display:none;">
+                                        <label for="uploaded-image-url">Hosted Image URL</label>
+                                        <div class="result-copy-wrapper">
+                                            <input type="text" id="uploaded-image-url" readonly placeholder="https://ibb.co/...">
+                                            <button type="button" id="btn-copy-image-url" class="btn-icon" title="Copy URL"><i class="fa-solid fa-copy"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -6,7 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
         scanMode: "camera",
         history: [],
         cameraScanner: null,
-        isCameraRunning: false
+        isCameraRunning: false,
+        imgbbApiKey: "",
+        uploadedImageUrl: ""
     };
 
     // === DOM ELEMENTS ===
@@ -31,6 +33,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // Action Buttons (Generate)
     const btnDownloadPng = document.getElementById("btn-download-png");
     const btnCopy = document.getElementById("btn-copy");
+
+    // Generator Image Elements
+    const imgbbApiKeyInput = document.getElementById("imgbb-api-key");
+    const dropZoneGen = document.getElementById("drop-zone-gen");
+    const genImageInput = document.getElementById("gen-image-input");
+    const filePreviewContainerGen = document.getElementById("file-preview-container-gen");
+    const genImagePreview = document.getElementById("gen-image-preview");
+    const btnRemoveGenFile = document.getElementById("btn-remove-gen-file");
+    const imageUploadStatus = document.getElementById("image-upload-status");
+    const imageProgressBar = document.getElementById("image-progress-bar");
+    const imageStatusText = document.getElementById("image-status-text");
+    const imageUrlResult = document.getElementById("image-url-result");
+    const uploadedImageUrlInput = document.getElementById("uploaded-image-url");
+    const btnCopyImageUrl = document.getElementById("btn-copy-image-url");
 
     // Scanner Elements
     const scanTypeBtns = document.querySelectorAll(".scan-type-btn");
@@ -64,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === INIT APP ===
     loadHistoryFromStorage();
+    loadApiKey();
     initEventListeners();
     generateQR(); // Generate initial default QR Code
 
@@ -168,6 +185,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Clear all history
         btnClearHistory.addEventListener("click", clearAllHistory);
+
+        // Image Generator Listeners
+        if (imgbbApiKeyInput) {
+            imgbbApiKeyInput.addEventListener("input", (e) => {
+                state.imgbbApiKey = e.target.value.trim();
+                localStorage.setItem("imgbb_api_key", state.imgbbApiKey);
+            });
+        }
+        if (dropZoneGen) {
+            dropZoneGen.addEventListener("click", () => genImageInput.click());
+            dropZoneGen.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                dropZoneGen.classList.add("dragover");
+            });
+            dropZoneGen.addEventListener("dragleave", () => {
+                dropZoneGen.classList.remove("dragover");
+            });
+            dropZoneGen.addEventListener("drop", (e) => {
+                e.preventDefault();
+                dropZoneGen.classList.remove("dragover");
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleGenImageFile(files[0]);
+                }
+            });
+        }
+        if (genImageInput) {
+            genImageInput.addEventListener("change", (e) => {
+                if (e.target.files.length > 0) {
+                    handleGenImageFile(e.target.files[0]);
+                }
+            });
+        }
+        if (btnRemoveGenFile) {
+            btnRemoveGenFile.addEventListener("click", (e) => {
+                e.stopPropagation();
+                resetGenFileSelector();
+            });
+        }
+        if (btnCopyImageUrl) {
+            btnCopyImageUrl.addEventListener("click", () => {
+                if (uploadedImageUrlInput.value) {
+                    copyTextToClipboard(uploadedImageUrlInput.value, "Image URL copied to clipboard!");
+                }
+            });
+        }
     }
 
     // === TABS & ROUTING ===
@@ -323,6 +386,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const smsMsg = document.getElementById("sms-msg").value.trim();
                 if (!smsPhone) return "";
                 return `SMSTO:${smsPhone}:${smsMsg}`;
+            case "image":
+                return state.uploadedImageUrl;
             default:
                 return "";
         }
@@ -714,6 +779,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById("sms-msg").value = smsParts[2];
                 }
                 break;
+            case "image":
+                state.uploadedImageUrl = content;
+                uploadedImageUrlInput.value = content;
+                imageUrlResult.style.display = "flex";
+                break;
         }
         generateQR();
     }
@@ -789,6 +859,110 @@ document.addEventListener("DOMContentLoaded", () => {
             "'": '&#039;'
         };
         return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
+    // === IMAGE GENERATOR FUNCTIONS ===
+    function loadApiKey() {
+        const saved = localStorage.getItem("imgbb_api_key");
+        if (saved) {
+            state.imgbbApiKey = saved;
+            if (imgbbApiKeyInput) imgbbApiKeyInput.value = saved;
+        }
+    }
+
+    function handleGenImageFile(file) {
+        if (!file.type.startsWith("image/")) {
+            showToast("Please select an image file.");
+            return;
+        }
+        if (!state.imgbbApiKey) {
+            showToast("Please enter your ImgBB API Key first.");
+            return;
+        }
+
+        // Show image preview locally
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if (genImagePreview) genImagePreview.src = e.target.result;
+            if (filePreviewContainerGen) filePreviewContainerGen.style.display = "flex";
+        };
+        reader.readAsDataURL(file);
+
+        // Upload to ImgBB
+        uploadImageToImgBB(file);
+    }
+
+    function uploadImageToImgBB(file) {
+        if (imageUploadStatus) imageUploadStatus.style.display = "block";
+        if (imageUrlResult) imageUrlResult.style.display = "none";
+        if (imageProgressBar) imageProgressBar.style.width = "0%";
+        if (imageStatusText) imageStatusText.textContent = "Connecting to ImgBB...";
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", `https://api.imgbb.com/1/upload?key=${state.imgbbApiKey}`, true);
+
+        // Track progress
+        xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable && imageProgressBar && imageStatusText) {
+                const percent = Math.round((e.loaded / e.total) * 100);
+                imageProgressBar.style.width = percent + "%";
+                imageStatusText.textContent = `Uploading: ${percent}%`;
+            }
+        };
+
+        // Response handlers
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success && response.data && response.data.url) {
+                        state.uploadedImageUrl = response.data.url;
+                        if (uploadedImageUrlInput) uploadedImageUrlInput.value = response.data.url;
+                        if (imageStatusText) imageStatusText.textContent = "Upload complete!";
+                        if (imageProgressBar) imageProgressBar.style.width = "100%";
+                        if (imageUrlResult) imageUrlResult.style.display = "flex";
+                        
+                        showToast("Image uploaded and hosted!");
+                        generateQR(); // Regenerate QR
+                    } else {
+                        const errorMsg = response.error ? response.error.message : "Unknown upload error";
+                        throw new Error(errorMsg);
+                    }
+                } catch (err) {
+                    handleUploadError(err.message);
+                }
+            } else {
+                handleUploadError(`HTTP Error ${xhr.status}`);
+            }
+        };
+
+        xhr.onerror = () => {
+            handleUploadError("Network connection error.");
+        };
+
+        xhr.send(formData);
+    }
+
+    function handleUploadError(msg) {
+        console.error("ImgBB Upload Failure:", msg);
+        if (imageStatusText) imageStatusText.textContent = `Upload failed: ${msg}`;
+        if (imageProgressBar) imageProgressBar.style.width = "0%";
+        showToast("Upload failed. Make sure your API key is correct.");
+    }
+
+    function resetGenFileSelector() {
+        if (genImageInput) genImageInput.value = "";
+        if (genImagePreview) genImagePreview.src = "";
+        if (filePreviewContainerGen) filePreviewContainerGen.style.display = "none";
+        if (imageUploadStatus) imageUploadStatus.style.display = "none";
+        if (imageUrlResult) imageUrlResult.style.display = "none";
+        state.uploadedImageUrl = "";
+        if (uploadedImageUrlInput) uploadedImageUrlInput.value = "";
+        showToast("Image upload reset.");
+        generateQR();
     }
 
     // Soft beep audio indicator using Web Audio API
